@@ -74,5 +74,3 @@ SpoilSpot provides a centralized platform to:
 
 ---
 
-## 📁 Folder Structure
-
