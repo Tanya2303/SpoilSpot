@@ -1,11 +1,28 @@
 import React, { useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Leaf, ArrowLeft } from 'lucide-react';
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../../services/firebase';
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [searchParams] = useSearchParams();
   const isDemo = searchParams.get('demo') === 'true';
+   const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate('/dashboard');
+    } catch (err) {
+      setError('Invalid email or password');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -42,7 +59,7 @@ const LoginPage = () => {
         )}
 
         {/* Form */}
-        <form className="mt-8 space-y-6 bg-white p-8 rounded-xl shadow-lg">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-6 bg-white p-8 rounded-xl shadow-lg">
           <div className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
@@ -109,13 +126,15 @@ const LoginPage = () => {
             </div>
           </div>
 
+         {error && <div className="text-red-600 text-sm">{error}</div>}
+          
           <div>
-            <Link
-              to="/dashboard"
+            <button
+              type="submit"
               className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200"
             >
               {isDemo ? 'Enter Demo' : 'Sign in'}
-            </Link>
+            </button>
           </div>
 
           <div className="text-center">
