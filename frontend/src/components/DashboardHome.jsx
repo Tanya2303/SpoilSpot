@@ -1,9 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState }  from 'react';
 import { Plus, MapPin, TrendingUp, TrendingDown, Clock, AlertTriangle } from 'lucide-react';
+import { auth, db } from '../services/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 const DashboardHome = () => {
-  // Mock data - in real app this would come from props or API
-  const userName = "Sarah";
+  const [lastName, setLastName] = useState('');
+  useEffect(() => {
+    const fetchLastName = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          setLastName(userDoc.data().lastName);
+        }
+      }
+    };
+    fetchLastName();
+  }, []);
+
+  const userName = lastName || "User";
+
   const expiringItems = [
     { name: "Greek Yogurt", daysLeft: 1, category: "Dairy", priority: "high" },
     { name: "Fresh Spinach", daysLeft: 2, category: "Vegetables", priority: "medium" },

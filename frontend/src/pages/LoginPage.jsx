@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Leaf, ArrowLeft } from 'lucide-react';
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from '../../services/firebase';
+import { auth } from '../services/firebase';
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);

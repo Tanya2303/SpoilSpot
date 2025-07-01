@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Check } from 'lucide-react';
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from '../../services/firebase';
+import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "../services/firebase";
 
 const SignupPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -25,6 +26,16 @@ const SignupPage = () => {
     }
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+  
+      // Save user data to Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        email: user.email,
+        firstName: firstName,
+        lastName: lastName
+      });
+
       await updateProfile(userCredential.user, {
         displayName: `${firstName} ${lastName}`
       });
